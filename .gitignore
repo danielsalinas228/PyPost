@@ -6,6 +6,10 @@ __pycache__/
 .env
 .venv/
 
+# Ignore other files
+pypost_beta.py
+pypost_test.py
+
 # Ignore folders
 data/
 Secrets/
