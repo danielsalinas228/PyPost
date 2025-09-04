@@ -16,17 +16,20 @@ from email import encoders
 class EmailSender:
     def __init__(self,
                 client_secret_file_path: str,
+                token_folder_path: str,
                 api_name: str,
                 api_version: str,
                 *scopes: list[str],
                 prefix=''):
         self.service = self.create_service(client_secret_file_path,
+                                           token_folder_path,
                                            api_name,
                                            api_version,
                                            scopes,
                                            prefix)
 
     def create_service(self, client_secret_file_path: str,
+                       token_folder_path: str,
                        api_name: str,
                        api_version: str,
                        *scopes: list[str],
@@ -37,18 +40,16 @@ class EmailSender:
         SCOPES = [scope for scope in scopes[0]]
 
         creds = None
-        working_dir = os.getcwd()
-        token_dir = 'Secrets'
+        token_dir = token_folder_path
         token_file = f'token{API_SERVICE_NAME}_{API_VERSION}{prefix}.json'
+        token_full_path = os.path.join(token_dir, token_file)
 
-        # Check if token dir existis first, if not, create the folder
-        if not os.path.exists(os.path.join(working_dir, token_dir)):
-            os.mkdir(os.path.join(working_dir, token_dir))
+        # Check if token dir exists first, if not, create the folder
+        if not os.path.exists(token_dir):
+            os.makedirs(token_dir, exist_ok=True)
         
-        if os.path.exists(os.path.join(working_dir, token_dir, token_file)):
-            creds = Credentials.from_authorized_user_file(os.path.join(
-                working_dir, token_dir, token_file
-            ), SCOPES)
+        if os.path.exists(token_full_path):
+            creds = Credentials.from_authorized_user_file(token_full_path, SCOPES)
 
         if not creds or not creds.valid:
             if creds and creds.expired and creds.refresh_token:
@@ -59,8 +60,7 @@ class EmailSender:
                 )
                 creds = flow.run_local_server(port=0)
             
-            with open(os.path.join(
-                working_dir, token_dir, token_file), 'w') as token:
+            with open(token_full_path, 'w') as token:
                 token.write(creds.to_json())
 
         try:
@@ -73,11 +73,8 @@ class EmailSender:
         except Exception as e:
             print(e)
             print(f'Failed to create service instance for {API_SERVICE_NAME}')
-            os.remove(os.path.join(
-                working_dir,
-                token_dir,
-                token_file
-            ))
+            if os.path.exists(token_full_path):
+                os.remove(token_full_path)
             return None
         
 
@@ -125,34 +122,3 @@ class EmailSender:
         ).execute()
 
         return sent_message
-        
-        
-if __name__ == '__main__':
-    CLIENT_SECRET_FILE = './Secrets/client_secret.json'
-    API_SERVICE_NAME = 'gmail'
-    API_VERSION = 'v1'
-    SCOPES = ['https://mail.google.com/']
-    emailSender = EmailSender(CLIENT_SECRET_FILE,
-                                         API_SERVICE_NAME,
-                                         API_VERSION,
-                                         *SCOPES)
-    
-    to_address = 'dannydaniiel10@gmail.com'
-    email_subject = 'This is a test'
-    
-    # Read HTML content from file
-    html_file_path = './templates/29-08-2025.html'
-    with open('./templates/email_body_template.html', 'r', encoding='utf-8') as f:
-        email_body = f.read()
-    
-    attch_dir = [html_file_path]
-    
-    print(dir(emailSender.service))
-    print(emailSender.send_email(to_address,
-                                 email_subject,
-                                 email_body,
-                                 body_type='html',
-                                 attachment_paths=attch_dir))
-    
-
-                
