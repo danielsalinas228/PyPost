@@ -9,4 +9,4 @@ __pycache__/
 # Ignore folders
 data/
 Secrets/
-'Letters to Send/'
+LettersToSend/
