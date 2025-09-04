@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>{letter_date}</title>
+<style>
+    html, body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        background: #0B3D91; /* navy blue background */
+        font-family: 'Times New Roman', serif;
+        display: flex;
+        justify-content: center;
+        overflow: auto; /* allow scroll if needed */
+    }
+
+    .letter {
+        width: 60%;
+        max-height: 80vh;
+        background: #fffdf5;
+        border: 1px solid #ccc;
+        padding: 40px 60px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        position: relative;
+        overflow: auto; /* internal scroll if needed */
+    }
+
+    .sender {
+        position: absolute;
+        top: 40px;
+        right: 60px;
+        text-align: left; /* left-aligned per request */
+        line-height: 1.4;
+        font-size: 12px;
+    }
+
+    .recipient {
+        margin-top: 120px;
+        text-align: left;
+        line-height: 1.4;
+        font-size: 12px;
+    }
+
+    .content {
+        margin-top: 40px;
+        line-height: 1.6;
+        font-size: 16px;
+        white-space: pre-wrap; /* preserves line breaks */
+    }
+</style>
+</head>
+<body>
+<div class="letter">
+    <div class="sender">
+        {sender_name}<br>
+        {sender_address}<br>
+        {sender_city}, {sender_country}<br>
+        Tel: {sender_phone}
+    </div>
+
+    <div class="recipient">
+        {recipient_name}<br>
+        {recipient_address}<br>
+        {recipient_city}, {recipient_country}<br>
+        Tel: {recipient_phone}
+    </div>
+
+    <div class="content">
+        {letter_content}
+    </div>
+</div>
+</body>
+</html>
