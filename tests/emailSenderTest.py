@@ -17,11 +17,11 @@ emailSender = EmailSender(
     *SCOPES
 )
 
-to_address = 'dannydaniiel10@gmail.com'
-email_subject = 'This is a test'
+to_address = 'dansalop@amazon.com'
+email_subject = '👾 Testing: One Wild HTML to Rule Them All'
 
 # Read HTML content from file
-html_file_path = '../templates/29-08-2025.html'
+html_file_path = '../templates/mock_attach.html'
 with open('../templates/email_body_template.html', 'r', encoding='utf-8') as f:
     email_body = f.read()
 

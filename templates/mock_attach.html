@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Artistic Emoji Chaos</title>
+    <style>
+        body {
+            margin: 0;
+            background: radial-gradient(circle at 60% 40%, #ffe4e1 0%, #fff8dc 100%);
+            overflow: hidden;
+            height: 100vh;
+        }
+        .crazy-text {
+            position: absolute;
+            font-size: 3vw;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            color: #ff69b4;
+            transform: rotate(-15deg);
+            left: 10vw;
+            top: 5vh;
+            text-shadow: 2px 2px 8px #fff, 0 0 10px #ff0;
+        }
+        .emoji {
+            position: absolute;
+            font-size: 5vw;
+            opacity: 0.85;
+            animation: float 8s infinite linear;
+        }
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg);}
+            50% { transform: translateY(-40vh) rotate(360deg);}
+            100% { transform: translateY(0) rotate(720deg);}
+        }
+        .emoji1 { left: 5vw; top: 60vh; animation-delay: 0s;}
+        .emoji2 { left: 20vw; top: 80vh; animation-delay: 1s;}
+        .emoji3 { left: 40vw; top: 70vh; animation-delay: 2s;}
+        .emoji4 { left: 60vw; top: 85vh; animation-delay: 3s;}
+        .emoji5 { left: 80vw; top: 65vh; animation-delay: 4s;}
+        .emoji6 { left: 15vw; top: 30vh; animation-delay: 2.5s;}
+        .emoji7 { left: 55vw; top: 20vh; animation-delay: 1.5s;}
+        .emoji8 { left: 75vw; top: 40vh; animation-delay: 3.5s;}
+        .emoji9 { left: 35vw; top: 10vh; animation-delay: 4.5s;}
+        .emoji10 { left: 65vw; top: 5vh; animation-delay: 5s;}
+        .emoji11 { left: 25vw; top: 50vh; animation-delay: 6s;}
+        .emoji12 { left: 85vw; top: 25vh; animation-delay: 7s;}
+    </style>
+</head>
+<body>
+    <div class="crazy-text">This is a test</div>
+    <div class="emoji emoji1">🐔</div>
+    <div class="emoji emoji2">🐓</div>
+    <div class="emoji emoji3">🐣</div>
+    <div class="emoji emoji4">🐤</div>
+    <div class="emoji emoji5">🐥</div>
+    <div class="emoji emoji6">🦆</div>
+    <div class="emoji emoji7">🦢</div>
+    <div class="emoji emoji8">🦤</div>
+    <div class="emoji emoji9">🚀</div>
+    <div class="emoji emoji10">🪐</div>
+    <div class="emoji emoji11">🌌</div>
+    <div class="emoji emoji12">❤️</div>
+    <div class="emoji emoji1" style="font-size:8vw; left:50vw; top:50vh; animation-delay:2s; opacity:0.5;">💖</div>
+    <div class="emoji emoji2" style="font-size:6vw; left:10vw; top:10vh; animation-delay:5s; opacity:0.7;">💞</div>
+    <div class="emoji emoji3" style="font-size:7vw; left:70vw; top:30vh; animation-delay:3s; opacity:0.6;">🌠</div>
+    <div class="emoji emoji4" style="font-size:4vw; left:30vw; top:80vh; animation-delay:6s; opacity:0.8;">👩‍🚀</div>
+    <div class="emoji emoji5" style="font-size:5vw; left:60vw; top:60vh; animation-delay:1s; opacity:0.9;">🛰️</div>
+    <div class="crazy-text" style="top:70vh; left:60vw; color:#00bfff; font-size:2vw; transform:rotate(25deg); text-shadow:2px 2px 8px #fff, 0 0 10px #0ff;">EMOJIS EVERYWHERE!</div>
+    <div class="crazy-text" style="top:30vh; left:30vw; color:#ff6347; font-size:2.5vw; transform:rotate(-35deg); text-shadow:2px 2px 8px #fff, 0 0 10px #f00;">LOVE & SPACE & CHICKENS</div>
+</body>
+</html>
