@@ -196,10 +196,10 @@ if __name__ == "__main__":
     import json
     from pathlib import Path
 
-    db = PostalDatabase("data/postalDatabase.db")
+    db = PostalDatabase("../postalDatabase.db")
 
     # Load postal_info from JSON file
-    postal_info_path = Path("data/postal_info.json")
+    postal_info_path = Path("../data/postal_info.json")
     with open(postal_info_path, "r", encoding="utf-8") as f:
         postal_info = json.load(f)
 

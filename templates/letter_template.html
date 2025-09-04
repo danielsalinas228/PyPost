@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>{letter_date}</title>
+<title>{{letter_date}}</title>
 <style>
     html, body {
         margin: 0;
@@ -57,21 +57,23 @@
 <body>
 <div class="letter">
     <div class="sender">
-        {sender_name}<br>
-        {sender_address}<br>
-        {sender_city}, {sender_country}<br>
-        Tel: {sender_phone}
+        {{sender_name}}<br>
+        {{sender_address_line1}}<br>
+        {{sender_address_line2}}, {{sender_zip}}<br>
+        {{sender_city_state}}, {{sender_country}}<br>
+        Tel: {{sender_phone}}
     </div>
 
     <div class="recipient">
-        {recipient_name}<br>
-        {recipient_address}<br>
-        {recipient_city}, {recipient_country}<br>
-        Tel: {recipient_phone}
+        {{recipient_name}}<br>
+        {{recipient_address_line1}}<br>
+        {{recipient_address_line2}}, {{recipient_zip}}<br>
+        {{recipient_city_state}}, {{recipient_country}}<br>
+        Tel: {{recipient_phone}}
     </div>
 
     <div class="content">
-        {letter_content}
+        {{letter_contents}}
     </div>
 </div>
 </body>
