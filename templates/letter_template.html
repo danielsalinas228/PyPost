@@ -4,22 +4,36 @@
 <meta charset="UTF-8">
 <title>{{letter_date}}</title>
 <style>
+    @import url('https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap');
+
     html, body {
         margin: 0;
         padding: 0;
-        width: 100%;
-        height: 100%;
-        background: #0B3D91; /* navy blue background */
+        width: 100vw;
+        height: 100vh;
         font-family: 'Times New Roman', serif;
+        background: linear-gradient(-45deg, #0B3D91, #1e3c72, #2a5298, #92a8d1);
+        background-size: 400% 400%;
+        animation: gradientBG 15s ease infinite;
         display: flex;
         justify-content: center;
-        overflow: auto; /* allow scroll if needed */
+        align-items: center;
+        overflow: hidden;
+    }
+
+    @keyframes gradientBG {
+        0% {background-position: 0% 50%;}
+        50% {background-position: 100% 50%;}
+        100% {background-position: 0% 50%;}
     }
 
     .letter {
-        width: 60%;
+        width: 60vw;
+        max-width: 700px;
         max-height: 80vh;
-        background: #fffdf5;
+        background: rgba(255,253,245,0.95);
+        border-radius: 18px;
+        box-shadow: 0 8px 32px 0 rgba(11,61,145,0.2);
         border: 1px solid #ccc;
         padding: 40px 60px;
         box-sizing: border-box;
@@ -27,30 +41,72 @@
         flex-direction: column;
         justify-content: flex-start;
         position: relative;
-        overflow: auto; /* internal scroll if needed */
+        overflow: auto;
+        animation: fadeIn 2s;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(30px);}
+        to { opacity: 1; transform: translateY(0);}
+    }
+
+    .sender, .recipient {
+        font-size: 11px;
+        line-height: 1.4;
+        margin-bottom: 8px;
+        color: #0B3D91;
+        font-weight: bold;
+        letter-spacing: 0.5px;
     }
 
     .sender {
         position: absolute;
-        top: 40px;
+        top: 30px;
         right: 60px;
-        text-align: left; /* left-aligned per request */
-        line-height: 1.4;
-        font-size: 12px;
+        text-align: left;
+        font-weight: bold;
     }
 
     .recipient {
-        margin-top: 120px;
+        margin-top: 100px;
         text-align: left;
-        line-height: 1.4;
-        font-size: 12px;
+        font-weight: bold;
     }
 
     .content {
-        margin-top: 40px;
-        line-height: 1.6;
-        font-size: 16px;
-        white-space: pre-wrap; /* preserves line breaks */
+        margin-top: 50px;
+        line-height: 1.8;
+        font-size: 20px;
+        color: #333;
+        font-family: 'Indie Flower', cursive, sans-serif;
+        white-space: pre-wrap;
+        background: rgba(247,202,201,0.07);
+        padding: 24px 18px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px 0 rgba(146,168,209,0.08);
+        transition: background 0.5s;
+        overflow-y: auto;
+        max-height: 45vh;
+    }
+
+    .content:hover {
+        background: rgba(146,168,209,0.15);
+    }
+
+    .seal-emoji {
+        position: absolute;
+        bottom: 18px;
+        right: 30px;
+        font-size: 3em;
+        opacity: 0.85;
+        animation: pulse 2.5s infinite;
+        user-select: none;
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1);}
+        50% { transform: scale(1.08);}
+        100% { transform: scale(1);}
     }
 </style>
 </head>
@@ -75,6 +131,6 @@
     <div class="content">
         {{letter_contents}}
     </div>
+    <div class="seal-emoji">🐣</div>
 </div>
 </body>
-</html>
