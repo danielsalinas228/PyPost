@@ -12,7 +12,11 @@ with open(api_key_path, "r", encoding="utf-8") as f:
 
 generator = AiTextGenerator(api_key=api_key, model="gpt-5-mini")
 
-prompt = "Write one creative email subject line in Spanish about receiving a letter, with one or two emojis. Output only the line."
+# Load prompt from template file
+prompt_template_path = Path("../templates/email_subject_prompt_template.txt")
+with open(prompt_template_path, "r", encoding="utf-8") as f:
+    prompt = f.read().strip()
+
 response = generator.generate(prompt)
 
 print("Prompt:", prompt)

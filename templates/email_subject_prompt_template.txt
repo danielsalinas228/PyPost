@@ -1,0 +1,1 @@
+Write one creative email subject line in Spanish about receiving a letter, with one or two emojis. Output only the line.
