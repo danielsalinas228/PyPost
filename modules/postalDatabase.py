@@ -190,3 +190,24 @@ class PostalDatabase:
                 for row in rows
             ]
         
+    def getAllLetters(self) -> list[dict]:
+        """Retrieve all letters in the database."""
+        with sqlite3.connect(self.db_path) as conn:
+            c = conn.cursor()
+            c.execute("SELECT * FROM letters")
+            rows = c.fetchall()
+            return [
+                {
+                    "letter_id": row[0],
+                    "letter_name": row[1],
+                    "creation_datetime": row[2],
+                    "contents": row[3],
+                    "postal_info": json.loads(row[4]),
+                    "received_date": row[5],
+                    "scheduled_delivery_datetime": row[6],
+                    "delivery_datetime": row[7],
+                    "status": row[8],
+                }
+                for row in rows
+            ]
+        
