@@ -10,7 +10,7 @@ output_dir = Path("generated_test_files")
 output_dir.mkdir(parents=True, exist_ok=True)
 
 # --- Test 1: Letter Template ---
-postal_info_path = Path("../data/postal_info.json")
+postal_info_path = Path("test_data/mock_postal_info.json")
 letter_path = Path("../LettersToSend/01-09-2025.txt")
 letter_template_path = Path("../templates/letter_template.html")
 

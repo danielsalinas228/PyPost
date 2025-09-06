@@ -1,6 +1,7 @@
 import sys
 from pathlib import Path
 from datetime import datetime
+import json
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 from modules.emailBodyHTMLRenderer import EmailBodyHTMLRenderer
 
@@ -8,9 +9,16 @@ from modules.emailBodyHTMLRenderer import EmailBodyHTMLRenderer
 template_path = Path("../templates/email_body_template.html")
 output_dir = Path("generated_test_files")
 output_dir.mkdir(parents=True, exist_ok=True)
+postal_info_path = Path("test_data/mock_postal_info.json")
+
+# Load mock postal info
+with open(postal_info_path, "r", encoding="utf-8") as f:
+    postal_info = json.load(f)
+
+recipient = postal_info["recipient"]
+recipient_name = recipient["name"]
 
 # Sample data
-recipient_name = "Lisania Amador"
 created_date = "2025-09-01 10:00:00"
 received_date = "2025-09-01 10:05:00"
 scheduled_delivery = "2025-09-02 08:00:00"

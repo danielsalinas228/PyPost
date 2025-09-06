@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>2025-09-01</title>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap');
+
+    html, body {
+        margin: 0;
+        padding: 0;
+        width: 100vw;
+        height: 100vh;
+        font-family: 'Times New Roman', serif;
+        background: linear-gradient(-45deg, #0B3D91, #1e3c72, #2a5298, #92a8d1);
+        background-size: 400% 400%;
+        animation: gradientBG 15s ease infinite;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+    }
+
+    @keyframes gradientBG {
+        0% {background-position: 0% 50%;}
+        50% {background-position: 100% 50%;}
+        100% {background-position: 0% 50%;}
+    }
+
+    .letter {
+        width: 60vw;
+        max-width: 700px;
+        max-height: 80vh;
+        background: rgba(255,253,245,0.95);
+        border-radius: 18px;
+        box-shadow: 0 8px 32px 0 rgba(11,61,145,0.2);
+        border: 1px solid #ccc;
+        padding: 40px 60px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        position: relative;
+        overflow: auto;
+        animation: fadeIn 2s;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(30px);}
+        to { opacity: 1; transform: translateY(0);}
+    }
+
+    .sender, .recipient {
+        font-size: 11px;
+        line-height: 1.4;
+        margin-bottom: 8px;
+        color: #0B3D91;
+        font-weight: bold;
+        letter-spacing: 0.5px;
+    }
+
+    .sender {
+        position: absolute;
+        top: 30px;
+        right: 60px;
+        text-align: left;
+        font-weight: bold;
+    }
+
+    .recipient {
+        margin-top: 100px;
+        text-align: left;
+        font-weight: bold;
+    }
+
+    .content {
+        margin-top: 50px;
+        line-height: 1.8;
+        font-size: 20px;
+        color: #333;
+        font-family: 'Indie Flower', cursive, sans-serif;
+        white-space: pre-wrap;
+        background: rgba(247,202,201,0.07);
+        padding: 24px 18px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px 0 rgba(146,168,209,0.08);
+        transition: background 0.5s;
+        overflow-y: auto;
+        max-height: 45vh;
+    }
+
+    .content:hover {
+        background: rgba(146,168,209,0.15);
+    }
+
+    .seal-emoji {
+        position: absolute;
+        bottom: 18px;
+        right: 30px;
+        font-size: 3em;
+        opacity: 0.85;
+        animation: pulse 2.5s infinite;
+        user-select: none;
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1);}
+        50% { transform: scale(1.08);}
+        100% { transform: scale(1);}
+    }
+</style>
+</head>
+<body>
+<div class="letter">
+    <div class="sender">
+        Daniel Salinas<br>
+        Calz. México-Tacuba 1532, Edif. Viena, Depto. 603<br>
+        Col. Argentina Poniente, C.P. 11230<br>
+        Miguel Hidalgo, Ciudad de México, México<br>
+        Tel: 55-3778-3937
+    </div>
+
+    <div class="recipient">
+        Lisania Amador<br>
+        Carr. San Pedro Progreso 76<br>
+        Col. Zaragoza, C.P. 54457<br>
+        Nicolás Romero, Estado de México, México<br>
+        Tel: 56-1697-0851
+    </div>
+
+    <div class="content">
+        30 de agosto de 2025
+Mi Lis,
+
+Nunca empecé a escribirte con la intención de que me respondieras. De hecho, al inicio hasta me ilusionaba pensar en la incertidumbre de si llegarías a leer mis cartas. Solo sabía que había mucho dentro de mi corazón que te pertenece y que necesitaba salir.
+
+Aun así, recibir tus mensajes me dio una alegría enorme. Los vi un poco tarde porque estaba en el súper y había dejado el telefono en el departamento, pero cuando regresé y leí tus palabras sentí un pulso en mi corazón. Me hizo tan feliz que, de alguna manera, lo que hice te hiciera sentir cerquita de mí.
+
+Escribir ha sido mi forma de mantenerte presente, de seguir dándote todo el amor que guardo para ti. Y sobre las flores, el día que te llevé aquel ramo a tu presentación de TT y vi tu carita de ilusión, supe que me habías mentido cuando decías que no te gustaban. Me alegra mucho que ahora las tengas contigo y que las cuides. Ojalá algún día pueda regalarte un campo entero de flores, pero mientras tanto quisiera seguir regalándote mas ramos de flores.
+
+Aquí estaré, esperando las noticias que me prometiste.
+
+Con cariño,
+Daniel
+    </div>
+    <div class="seal-emoji">🐣</div>
+</div>
+</body>

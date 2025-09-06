@@ -1,0 +1,22 @@
+{   
+    "sender": {
+        "name": "Walter White",
+        "address_line1": "308 Negra Arroyo Lane",
+        "address_line2": "Apt. 1B",
+        "zip": "C.P. 87104",
+        "city_state": "Albuquerque, New Mexico",
+        "country": "USA",
+        "phone": "505-555-0112",
+        "email": "heisenberg@breakingbad.com"
+    },
+    "recipient": {
+        "name": "Jesse Pinkman",
+        "address_line1": "9809 Margo Street",
+        "address_line2": "Unit 5",
+        "zip": "C.P. 87121",
+        "city_state": "Albuquerque, New Mexico",
+        "country": "USA",
+        "phone": "505-555-0199",
+        "email": "capncook@breakingbad.com"
+    }
+}

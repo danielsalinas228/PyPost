@@ -8,10 +8,10 @@ import uuid
 import json
 import os
 
-db = PostalDatabase("postalDatabase.db")
+db = PostalDatabase("test_data/postalDatabase.db")
 
 # Load postal_info from JSON file
-postal_info_path = Path("../data/postal_info.json")
+postal_info_path = Path("test_data/mock_postal_info.json")
 with open(postal_info_path, "r", encoding="utf-8") as f:
     postal_info = json.load(f)
 

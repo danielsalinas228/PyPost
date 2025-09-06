@@ -6,7 +6,7 @@ from modules.letterHTMLRenderer import LetterHTMLRenderer
 import json
 
 # Paths
-postal_info_path = Path("../data/postal_info.json")
+postal_info_path = Path("test_data/mock_postal_info.json")
 letter_path = Path("../LettersToSend/01-09-2025.txt")
 template_path = Path("../templates/letter_template.html")
 output_dir = Path("generated_test_files")
