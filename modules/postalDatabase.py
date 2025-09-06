@@ -234,7 +234,7 @@ class PostalDatabase:
             c.execute("""
                 SELECT letter_id, letter_name, status, scheduled_delivery_datetime
                 FROM letters
-                WHERE status = 'in transit' AND scheduled_delivery_datetime <= ?
+                WHERE status = 'in transit' AND scheduled_delivery_datetime >= ?
             """, (now,))
             rows = c.fetchall()
             return [
@@ -246,3 +246,23 @@ class PostalDatabase:
                 }
                 for row in rows
             ]
+        
+if __name__ == "__main__":
+    import sys
+    from pprint import pprint
+    db_path = "../data/postal.db"
+    if len(sys.argv) < 2:
+        print("Usage: python3 postalDatabase.py --getAllLetters|--getAllLettersSummary|--getPendingLettersSummary [db_path]")
+        sys.exit(1)
+    method = sys.argv[1]
+    if len(sys.argv) > 2:
+        db_path = sys.argv[2]
+    pdb = PostalDatabase(db_path)
+    if method == "--getAllLetters":
+        pprint(pdb.getAllLetters())
+    elif method == "--getAllLettersSummary":
+        pprint(pdb.get_all_letters_summary())
+    elif method == "--getPendingLettersSummary":
+        pprint(pdb.get_pending_letters_summary())
+    else:
+        print("Unknown method. Use --getAllLetters, --getAllLettersSummary, or --getPendingLettersSummary.")
