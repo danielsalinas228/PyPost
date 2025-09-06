@@ -27,6 +27,70 @@
         100% {background-position: 0% 50%;}
     }
 
+    /* Envelope Animation Styles */
+    .envelope-container {
+        position: absolute;
+        width: 340px;
+        height: 220px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 2;
+        transition: opacity 1s;
+    }
+
+    .envelope {
+        position: absolute;
+        width: 340px;
+        height: 220px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 8px 32px 0 rgba(11,61,145,0.2);
+        border: 1px solid #ccc;
+        overflow: hidden;
+        z-index: 2;
+    }
+
+    .envelope-flap {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 340px;
+        height: 110px;
+        background: #f7cac9;
+        clip-path: polygon(0 0, 100% 0, 50% 100%);
+        z-index: 3;
+        transform-origin: top center;
+        animation: openFlap 2s 2s forwards;
+    }
+
+    @keyframes openFlap {
+        to { transform: rotateX(120deg); opacity: 0; }
+    }
+
+    .heart-seal-emoji {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 2.5em;
+        z-index: 4;
+        animation: pulse 2.5s infinite, fadeSeal 2s 2s forwards;
+        user-select: none;
+        opacity: 1;
+    }
+
+    @keyframes pulse {
+        0% { transform: translate(-50%, -50%) scale(1);}
+        50% { transform: translate(-50%, -50%) scale(1.08);}
+        100% { transform: translate(-50%, -50%) scale(1);}
+    }
+
+    @keyframes fadeSeal {
+        to { opacity: 0; }
+    }
+
+    /* Letter Styles */
     .letter {
         width: 60vw;
         max-width: 700px;
@@ -42,12 +106,15 @@
         justify-content: flex-start;
         position: relative;
         overflow: auto;
-        animation: fadeIn 2s;
+        opacity: 0;
+        transform: scale(0.5);
+        transition: opacity 1.2s, transform 1.2s;
+        z-index: 3;
     }
 
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(30px);}
-        to { opacity: 1; transform: translateY(0);}
+    .letter.visible {
+        opacity: 1;
+        transform: scale(1);
     }
 
     .sender, .recipient {
@@ -102,16 +169,15 @@
         animation: pulse 2.5s infinite;
         user-select: none;
     }
-
-    @keyframes pulse {
-        0% { transform: scale(1);}
-        50% { transform: scale(1.08);}
-        100% { transform: scale(1);}
-    }
 </style>
 </head>
 <body>
-<div class="letter">
+<div class="envelope-container" id="envelopeContainer">
+    <div class="envelope"></div>
+    <div class="envelope-flap"></div>
+    <div class="heart-seal-emoji" id="heartSeal">❤️</div>
+</div>
+<div class="letter" id="letterContent">
     <div class="sender">
         {{sender_name}}<br>
         {{sender_address_line1}}<br>
@@ -133,4 +199,12 @@
     </div>
     <div class="seal-emoji">🐣</div>
 </div>
+<script>
+    // After 3 seconds, hide envelope and show letter
+    setTimeout(function() {
+        document.getElementById('envelopeContainer').style.opacity = '0';
+        document.getElementById('letterContent').classList.add('visible');
+    }, 3000);
+</script>
 </body>
+</html>
