@@ -1,10 +1,10 @@
+from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 import json
 import sys
 import random
 import uuid
-from pathlib import Path
 from datetime import datetime, timedelta
 
 from modules.postalDatabase import PostalDatabase
@@ -38,7 +38,7 @@ class PyPost:
             api_data = json.load(f)
             api_key = api_data["api_key"]
         self.postal_info_path = postal_info_path
-        self.ai_text_generator = AiTextGenerator(openApi_key=api_key)
+        self.ai_text_generator = AiTextGenerator(api_key=api_key)
         with open(email_subject_prompt_template, "r", encoding="utf-8") as f:
             self.email_subject_prompt = f.read()
         self.deault_email_subject = "💌 Una carta te espera"
