@@ -1,26 +1,28 @@
-from datetime import datetime, timedelta
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+
 import json
 import sys
 import random
+import uuid
 from pathlib import Path
+from datetime import datetime, timedelta
 
 from modules.postalDatabase import PostalDatabase
-from modules.letterHTMLRenderer import LetterHTMLRenderer
-from modules.emailBodyHTMLRenderer import EmailBodyHTMLRenderer
+from modules.HTMLRenderer import HTMLRenderer
 from modules.emailSender import EmailSender
 
 class PyPost:
     def __init__(self,
-                 db_path: str = "data/postal.db",
-                 letter_template_path: str = "templates/letter_template.html",
-                 email_body_template_path: str = "templates/email_body_template.html",
-                 client_secret_file: str = "Secrets/client_secret.json",
-                 token_folder_path: str = "Secrets",
-                 postal_info_path: str = "data/postal_info.json"):
+                 db_path: str = PROJECT_ROOT / "data/postal.db",
+                 letter_template_path: str = PROJECT_ROOT / "templates/letter_template.html",
+                 email_body_template_path: str = PROJECT_ROOT / "templates/email_body_template.html",
+                 client_secret_file: str = PROJECT_ROOT / "Secrets/client_secret.json",
+                 token_folder_path: str = PROJECT_ROOT / "Secrets",
+                 postal_info_path: str = PROJECT_ROOT / "data/postal_info.json"):
         self.db_path = db_path
         self.db = PostalDatabase(db_path)
-        self.letter_renderer = LetterHTMLRenderer(letter_template_path)
-        self.email_body_renderer = EmailBodyHTMLRenderer(email_body_template_path)
+        self.letter_renderer = HTMLRenderer(letter_template_path)
+        self.email_body_renderer = HTMLRenderer(email_body_template_path)
         self.email_sender = EmailSender(
             client_secret_file,
             token_folder_path,
@@ -51,8 +53,36 @@ class PyPost:
         scheduled_dt = base_dt + timedelta(seconds=offset_seconds)
         return scheduled_dt.strftime("%Y-%m-%d %H:%M:%S")
 
-    def render_template(self, letter_content: str, sender: dict, recipient: dict, letter_date: str) -> str:
-        return self.letter_renderer.render(letter_content, sender, recipient, letter_date)
+    def render_letter_template(self, letter_content: str, sender: dict, recipient: dict, letter_name: str) -> str:
+        context = {
+            "letter_name": letter_name,
+            "letter_contents": letter_content,
+            "sender_name": sender.get("name", ""),
+            "sender_address_line1": sender.get("address_line1", ""),
+            "sender_address_line2": sender.get("address_line2", ""),
+            "sender_zip": sender.get("zip", ""),
+            "sender_city_state": sender.get("city_state", ""),
+            "sender_country": sender.get("country", ""),
+            "sender_phone": sender.get("phone", ""),
+            "recipient_name": recipient.get("name", ""),
+            "recipient_address_line1": recipient.get("address_line1", ""),
+            "recipient_address_line2": recipient.get("address_line2", ""),
+            "recipient_zip": recipient.get("zip", ""),
+            "recipient_city_state": recipient.get("city_state", ""),
+            "recipient_country": recipient.get("country", ""),
+            "recipient_phone": recipient.get("phone", "")
+        }
+        return self.letter_renderer.render(context)
+
+    def render_email_body(self, letter: dict) -> str:
+        context = {
+            "recipient_name": letter["postal_info"]["recipient"]["name"],
+            "created_date": letter["creation_datetime"],
+            "received_date": letter["received_date"],
+            "scheduled_delivery": letter["scheduled_delivery_datetime"],
+            "sent_date": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        }
+        return self.email_body_renderer.render(context)
 
     def submit_letter(self, letter_file_path: str) -> str:
         postal_data = self.load_postal_data()
@@ -64,15 +94,16 @@ class PyPost:
 
         now_iso = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         last_letter = self.db.get_last_submitted_letter()
-        prev_scheduled = last_letter["scheduled_delivery_datetime"] if last_letter else None
-        scheduled_delivery = self.calculate_delivery_datetime(prev_scheduled)
+        prev_scheduled_datetime = last_letter["scheduled_delivery_datetime"] if last_letter else None
+        scheduled_delivery = self.calculate_delivery_datetime(prev_scheduled_datetime)
 
-        html_contents = self.render_template(letter_content, sender, recipient, now_iso)
+        letter_name = Path(letter_file_path).stem
+        html_contents = self.render_letter_template(letter_content, sender, recipient, letter_name)
 
         letter_data = {
-            "letter_id": str(int(datetime.now().timestamp() * 1000)),
-            "letter_name": Path(letter_file_path).stem,
-            "creation_datetime": now_iso,
+            "letter_id": str(uuid.uuid4()),
+            "letter_name": letter_name,
+            "creation_datetime": letter_name, # Using letter_name as creation date
             "contents": letter_content,
             "html_contents": html_contents,
             "postal_info": postal_data,
@@ -91,17 +122,12 @@ class PyPost:
             return False
 
         recipient_email = letter["postal_info"]["recipient"]["email"]
+        # TODO: Implement email subject generated with AI
         subject = f"Carta PyPost: {letter['letter_name']} ({letter['creation_datetime']})"
-        body_html = self.email_body_renderer.render(
-            recipient_name=letter["postal_info"]["recipient"]["name"],
-            created_date=letter["creation_datetime"],
-            received_date=letter["received_date"],
-            scheduled_delivery=letter["scheduled_delivery_datetime"],
-            sent_date=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        )
+        body_html = self.render_email_body(letter)
 
         # Save the HTML letter to a temp file for attachment
-        temp_html_path = f"temp_{letter_id}.html"
+        temp_html_path = PROJECT_ROOT / f"temp_{letter_id}.html"
         with open(temp_html_path, "w", encoding="utf-8") as f:
             f.write(letter["html_contents"])
 
@@ -138,9 +164,9 @@ if __name__ == "__main__":
         sys.exit(1)
     letter_path = sys.argv[1]
     pypost = PyPost()
-    letter_id = pypost.submit_letter(letter_path)
-    sent = pypost.send_email(letter_id)
-    if sent:
-        print("Letter sent successfully!")
+    pypost.submit_letter(letter_path)
+    sent_letters_ids = pypost.send_pending_letters()
+    if sent_letters_ids:
+        print(f"Letters sent successfully!: \n{', '.join(sent_letters_ids)}")
     else:
         print("Failed to send letter.")
