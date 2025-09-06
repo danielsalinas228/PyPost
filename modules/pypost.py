@@ -10,6 +10,7 @@ from datetime import datetime, timedelta
 from modules.postalDatabase import PostalDatabase
 from modules.HTMLRenderer import HTMLRenderer
 from modules.emailSender import EmailSender
+from modules.aiTextGenerator import AiTextGenerator
 
 class PyPost:
     def __init__(self,
@@ -18,7 +19,9 @@ class PyPost:
                  email_body_template_path: str = PROJECT_ROOT / "templates/email_body_template.html",
                  client_secret_file: str = PROJECT_ROOT / "Secrets/client_secret.json",
                  token_folder_path: str = PROJECT_ROOT / "Secrets",
-                 postal_info_path: str = PROJECT_ROOT / "data/postal_info.json"):
+                 postal_info_path: str = PROJECT_ROOT / "data/postal_info.json",
+                 api_key_path: str = PROJECT_ROOT / "Secrets/openApi_key.json",
+                 email_subject_prompt_template: str = PROJECT_ROOT / "templates/email_subject_prompt_template.txt"):
         self.db_path = db_path
         self.db = PostalDatabase(db_path)
         self.letter_renderer = HTMLRenderer(letter_template_path)
@@ -30,7 +33,15 @@ class PyPost:
             "v1",
             "https://mail.google.com/"
         )
+        api_key_path = Path(api_key_path)
+        with open(api_key_path, "r", encoding="utf-8") as f:
+            api_data = json.load(f)
+            api_key = api_data["api_key"]
         self.postal_info_path = postal_info_path
+        self.ai_text_generator = AiTextGenerator(openApi_key=api_key)
+        with open(email_subject_prompt_template, "r", encoding="utf-8") as f:
+            self.email_subject_prompt = f.read()
+        self.deault_email_subject = "💌 Una carta te espera"
 
     def load_postal_data(self) -> dict:
         with open(self.postal_info_path, "r", encoding="utf-8") as f:
@@ -122,8 +133,14 @@ class PyPost:
             return False
 
         recipient_email = letter["postal_info"]["recipient"]["email"]
-        # TODO: Implement email subject generated with AI
-        subject = f"Carta PyPost: {letter['letter_name']} ({letter['creation_datetime']})"
+        
+        # Generate email subject with AI, fallback to default if fails
+        try:
+            subject = self.ai_text_generator.generate(self.email_subject_prompt)
+        except Exception as e:
+            print(f"AI subject generation failed: {e}")
+            subject = self.deault_email_subject
+        
         body_html = self.render_email_body(letter)
 
         # Save the HTML letter to a temp file for attachment
@@ -159,6 +176,7 @@ class PyPost:
         return sent_ids
 
 if __name__ == "__main__":
+    #TODO: delete lines, pypost should be used as a module
     if len(sys.argv) != 2:
         print("Usage: python3 pypost.py path_to_letter.txt")
         sys.exit(1)
