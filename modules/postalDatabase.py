@@ -210,4 +210,39 @@ class PostalDatabase:
                 }
                 for row in rows
             ]
-        
+    
+    def get_all_letters_summary(self) -> list[dict]:
+        """Return summary of all letters: letter_id, letter_name, status."""
+        with sqlite3.connect(self.db_path) as conn:
+            c = conn.cursor()
+            c.execute("SELECT letter_id, letter_name, status FROM letters")
+            rows = c.fetchall()
+            return [
+                {
+                    "letter_id": row[0],
+                    "letter_name": row[1],
+                    "status": row[2]
+                }
+                for row in rows
+            ]
+
+    def get_pending_letters_summary(self) -> list[dict]:
+        """Return summary of all pending letters: letter_id, letter_name, status, scheduled_delivery_datetime."""
+        now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        with sqlite3.connect(self.db_path) as conn:
+            c = conn.cursor()
+            c.execute("""
+                SELECT letter_id, letter_name, status, scheduled_delivery_datetime
+                FROM letters
+                WHERE status = 'in transit' AND scheduled_delivery_datetime <= ?
+            """, (now,))
+            rows = c.fetchall()
+            return [
+                {
+                    "letter_id": row[0],
+                    "letter_name": row[1],
+                    "status": row[2],
+                    "scheduled_delivery_datetime": row[3]
+                }
+                for row in rows
+            ]
