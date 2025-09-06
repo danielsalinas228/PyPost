@@ -21,10 +21,10 @@ with open(letter_path, "r", encoding="utf-8") as f:
 
 sender = postal_info["sender"]
 recipient = postal_info["recipient"]
-letter_date = "2025-09-01"
+letter_name = "2025-09-01"
 
 letter_context = {
-    "letter_date": letter_date,
+    "letter_name": letter_name,
     "letter_contents": letter_contents,
     "sender_name": sender.get("name", ""),
     "sender_address_line1": sender.get("address_line1", ""),
@@ -51,7 +51,7 @@ print(letter_html[:500])
 assert sender["name"] in letter_html, "Sender name not found in HTML"
 assert recipient["name"] in letter_html, "Recipient name not found in HTML"
 assert letter_contents.strip() in letter_html, "Letter contents not found in HTML"
-assert letter_date in letter_html, "Letter date not found in HTML"
+assert letter_name in letter_html, "Letter date not found in HTML"
 print("Letter template checks passed.")
 
 iso_now = datetime.now().isoformat(timespec="seconds").replace(":", "-")
