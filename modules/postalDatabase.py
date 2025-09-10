@@ -234,7 +234,7 @@ class PostalDatabase:
             c.execute("""
                 SELECT letter_id, letter_name, status, scheduled_delivery_datetime
                 FROM letters
-                WHERE status = 'in transit' AND scheduled_delivery_datetime >= ?
+                WHERE status = 'in transit' AND scheduled_delivery_datetime <= ?
             """, (now,))
             rows = c.fetchall()
             return [
