@@ -20,7 +20,7 @@ class EmailSender:
                 api_name: str,
                 api_version: str,
                 *scopes: list[str],
-                prefix=''):
+                prefix: str=''):
         self.service = self.create_service(client_secret_file_path,
                                            token_folder_path,
                                            api_name,
@@ -83,11 +83,13 @@ class EmailSender:
                    subject: str,
                    body: str, 
                    body_type: str='plain',
-                   attachment_paths: list[str]=None):
-        
+                   attachment_paths: list[str]=None,
+                   bcc: str=None):
+
         message = MIMEMultipart()
         message['to'] = to
         message['subject'] = subject
+        if bcc is not None: message['bcc'] = bcc
 
         if body_type.lower() not in ['plain', 'html']:
             raise ValueError("body_type must be either 'plain' or 'html'")
