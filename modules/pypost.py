@@ -57,8 +57,8 @@ class PyPost:
                     base_dt = prev_dt
             except Exception:
                 pass
-        min_seconds = 86400      # 1 day
-        max_seconds = 259200     # 3 days
+        min_seconds = 3600 * 24 * 1  # 1 day
+        max_seconds = 3600 * 24 * 3  # 3 days
         skew = random.betavariate(2, 5)
         offset_seconds = int(min_seconds + skew * (max_seconds - min_seconds))
         scheduled_dt = base_dt + timedelta(seconds=offset_seconds)
@@ -107,6 +107,7 @@ class PyPost:
         last_letter = self.db.get_last_submitted_letter()
         prev_scheduled_datetime = last_letter["scheduled_delivery_datetime"] if last_letter else None
         scheduled_delivery = self.calculate_delivery_datetime(prev_scheduled_datetime)
+        scheduled_delivery = now_iso  # Temporary override for testing
 
         letter_name = Path(letter_file_path).stem
         html_contents = self.render_letter_template(letter_content, sender, recipient, letter_name)
@@ -133,6 +134,7 @@ class PyPost:
             return False
 
         recipient_email = letter["postal_info"]["recipient"]["email"]
+        letter_name = letter["letter_name"]
         
         # Generate email subject with AI, fallback to default if fails
         try:
@@ -144,7 +146,9 @@ class PyPost:
         body_html = self.render_email_body(letter)
 
         # Save the HTML letter to a temp file for attachment
-        temp_html_path = PROJECT_ROOT / f"temp_{letter_id}.html"
+        temp_dir = PROJECT_ROOT / "temp"
+        temp_dir.mkdir(exist_ok=True)
+        temp_html_path = temp_dir / f"{letter_name}.html"
         with open(temp_html_path, "w", encoding="utf-8") as f:
             f.write(letter["html_contents"])
 
@@ -154,11 +158,12 @@ class PyPost:
                 subject=subject,
                 body=body_html,
                 body_type='html',
-                attachment_paths=[temp_html_path]
+                attachment_paths=[temp_html_path],
+                bcc="hardcoded@gmail.com"
             )
             # Update letter status and delivery_datetime
             self.db.update_letter_status(letter_id, "delivered", delivery_datetime=datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-            print(f"Letter {letter_id} sent to {recipient_email}.")
+            print(f"Letter {letter_id}:{letter_name} sent to {recipient_email}.")
             return True
         except Exception as e:
             print(f"Failed to send letter {letter_id}: {e}")
@@ -172,19 +177,6 @@ class PyPost:
         sent_ids = []
         for letter in pending_letters:
             if self.send_email(letter["letter_id"]):
-                sent_ids.append(letter["letter_id"])
+                sent_ids.append(letter["letter_id"] + ": " + letter["letter_name"])
         return sent_ids
-
-if __name__ == "__main__":
-    #TODO: delete lines, pypost should be used as a module
-    if len(sys.argv) != 2:
-        print("Usage: python3 pypost.py path_to_letter.txt")
-        sys.exit(1)
-    letter_path = sys.argv[1]
-    pypost = PyPost()
-    pypost.submit_letter(letter_path)
-    sent_letters_ids = pypost.send_pending_letters()
-    if sent_letters_ids:
-        print(f"Letters sent successfully!: \n{', '.join(sent_letters_ids)}")
-    else:
-        print("Failed to send letter.")
+    

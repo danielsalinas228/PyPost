@@ -19,6 +19,7 @@ class PostalDatabase:
                     letter_name TEXT NOT NULL,
                     creation_datetime TEXT NOT NULL,
                     contents TEXT NOT NULL,
+                    html_contents TEXT NOT NULL,
                     postal_info TEXT NOT NULL,
                     received_date TEXT NOT NULL,
                     scheduled_delivery_datetime TEXT NOT NULL,
@@ -34,14 +35,15 @@ class PostalDatabase:
             c = conn.cursor()
             c.execute("""
                 INSERT INTO letters (
-                    letter_id, letter_name, creation_datetime, contents, postal_info,
+                    letter_id, letter_name, creation_datetime, contents, html_contents, postal_info,
                     received_date, scheduled_delivery_datetime, delivery_datetime, status
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (
                 letter_data['letter_id'],
                 letter_data['letter_name'],
                 letter_data['creation_datetime'],
                 letter_data['contents'],
+                letter_data['html_contents'],
                 json.dumps(letter_data['postal_info']),
                 letter_data['received_date'],
                 letter_data['scheduled_delivery_datetime'],
@@ -63,11 +65,12 @@ class PostalDatabase:
                     "letter_name": row[1],
                     "creation_datetime": row[2],
                     "contents": row[3],
-                    "postal_info": json.loads(row[4]),
-                    "received_date": row[5],
-                    "scheduled_delivery_datetime": row[6],
-                    "delivery_datetime": row[7],
-                    "status": row[8],
+                    "html_contents": row[4],
+                    "postal_info": json.loads(row[5]),
+                    "received_date": row[6],
+                    "scheduled_delivery_datetime": row[7],
+                    "delivery_datetime": row[8],
+                    "status": row[9],
                 }
             return None
 
@@ -87,11 +90,12 @@ class PostalDatabase:
                     "letter_name": row[1],
                     "creation_datetime": row[2],
                     "contents": row[3],
-                    "postal_info": json.loads(row[4]),
-                    "received_date": row[5],
-                    "scheduled_delivery_datetime": row[6],
-                    "delivery_datetime": row[7],
-                    "status": row[8],
+                    "html_contents": row[4],
+                    "postal_info": json.loads(row[5]),
+                    "received_date": row[6],
+                    "scheduled_delivery_datetime": row[7],
+                    "delivery_datetime": row[8],
+                    "status": row[9],
                 }
                 for row in rows
             ]
@@ -122,7 +126,7 @@ class PostalDatabase:
             c.execute("""
                 SELECT * FROM letters
                 WHERE status = 'in transit'
-                ORDER BY creation_datetime DESC
+                ORDER BY received_date DESC
                 LIMIT 1
             """)
             row = c.fetchone()
@@ -132,22 +136,23 @@ class PostalDatabase:
                     "letter_name": row[1],
                     "creation_datetime": row[2],
                     "contents": row[3],
-                    "postal_info": json.loads(row[4]),
-                    "received_date": row[5],
-                    "scheduled_delivery_datetime": row[6],
-                    "delivery_datetime": row[7],
-                    "status": row[8],
+                    "html_contents": row[4],
+                    "postal_info": json.loads(row[5]),
+                    "received_date": row[6],
+                    "scheduled_delivery_datetime": row[7],
+                    "delivery_datetime": row[8],
+                    "status": row[9],
                 }
             return None
         
     def get_next_letter_to_deliver(self) -> Optional[dict]:
-        """Retrieve the next letter to be delivered (earliest creation_datetime with status 'in transit')."""
+        """Retrieve the next letter to be delivered (earliest received_date with status 'in transit')."""
         with sqlite3.connect(self.db_path) as conn:
             c = conn.cursor()
             c.execute("""
                 SELECT * FROM letters
                 WHERE status = 'in transit'
-                ORDER BY creation_datetime ASC
+                ORDER BY received_date ASC
                 LIMIT 1
             """)
             row = c.fetchone()
@@ -157,11 +162,12 @@ class PostalDatabase:
                     "letter_name": row[1],
                     "creation_datetime": row[2],
                     "contents": row[3],
-                    "postal_info": json.loads(row[4]),
-                    "received_date": row[5],
-                    "scheduled_delivery_datetime": row[6],
-                    "delivery_datetime": row[7],
-                    "status": row[8],
+                    "html_contents": row[4],
+                    "postal_info": json.loads(row[5]),
+                    "received_date": row[6],
+                    "scheduled_delivery_datetime": row[7],
+                    "delivery_datetime": row[8],
+                    "status": row[9],
                 }
             return None
     
@@ -181,11 +187,12 @@ class PostalDatabase:
                     "letter_name": row[1],
                     "creation_datetime": row[2],
                     "contents": row[3],
-                    "postal_info": json.loads(row[4]),
-                    "received_date": row[5],
-                    "scheduled_delivery_datetime": row[6],
-                    "delivery_datetime": row[7],
-                    "status": row[8],
+                    "html_contents": row[4],
+                    "postal_info": json.loads(row[5]),
+                    "received_date": row[6],
+                    "scheduled_delivery_datetime": row[7],
+                    "delivery_datetime": row[8],
+                    "status": row[9],
                 }
                 for row in rows
             ]
@@ -202,11 +209,12 @@ class PostalDatabase:
                     "letter_name": row[1],
                     "creation_datetime": row[2],
                     "contents": row[3],
-                    "postal_info": json.loads(row[4]),
-                    "received_date": row[5],
-                    "scheduled_delivery_datetime": row[6],
-                    "delivery_datetime": row[7],
-                    "status": row[8],
+                    "html_contents": row[4],
+                    "postal_info": json.loads(row[5]),
+                    "received_date": row[6],
+                    "scheduled_delivery_datetime": row[7],
+                    "delivery_datetime": row[8],
+                    "status": row[9],
                 }
                 for row in rows
             ]
@@ -215,13 +223,14 @@ class PostalDatabase:
         """Return summary of all letters: letter_id, letter_name, status."""
         with sqlite3.connect(self.db_path) as conn:
             c = conn.cursor()
-            c.execute("SELECT letter_id, letter_name, status FROM letters")
+            c.execute("SELECT letter_id, letter_name, scheduled_delivery_datetime, status FROM letters")
             rows = c.fetchall()
             return [
                 {
                     "letter_id": row[0],
                     "letter_name": row[1],
-                    "status": row[2]
+                    "scheduled_delivery_datetime": row[2],
+                    "status": row[3]
                 }
                 for row in rows
             ]
@@ -235,6 +244,27 @@ class PostalDatabase:
                 SELECT letter_id, letter_name, status, scheduled_delivery_datetime
                 FROM letters
                 WHERE status = 'in transit' AND scheduled_delivery_datetime <= ?
+            """, (now,))
+            rows = c.fetchall()
+            return [
+                {
+                    "letter_id": row[0],
+                    "letter_name": row[1],
+                    "status": row[2],
+                    "scheduled_delivery_datetime": row[3]
+                }
+                for row in rows
+            ]
+        
+    def get_next_letters_2deliver_summary(self) -> list[dict]:
+        """Return summary of all pending letters: letter_id, letter_name, status, scheduled_delivery_datetime."""
+        now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        with sqlite3.connect(self.db_path) as conn:
+            c = conn.cursor()
+            c.execute("""
+                SELECT letter_id, letter_name, status, scheduled_delivery_datetime
+                FROM letters
+                WHERE status = 'in transit' AND scheduled_delivery_datetime >= ?
             """, (now,))
             rows = c.fetchall()
             return [

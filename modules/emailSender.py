@@ -68,7 +68,7 @@ class EmailSender:
                             API_VERSION,
                             credentials=creds,
                             static_discovery=False)
-            print(API_SERVICE_NAME, API_VERSION, 'Service created successfully')
+            #print(API_SERVICE_NAME, API_VERSION, 'Service created successfully')
             return service
         except Exception as e:
             print(e)

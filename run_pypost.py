@@ -21,13 +21,14 @@ def main():
 		letter_path = f"LettersToSend/{letter_name}.txt"
 		letter_id = pypost.submit_letter(letter_path)
 		if letter_id:
-			print(f"Letter submitted successfully! Letter ID: {letter_id}")
+			print(f"Letter submitted successfully! Letter ID: {letter_id}:{letter_name}.txt")
 		else:
 			print("Failed to submit letter.")
 		# Delete the submitted letter file
 		try:
-			Path(letter_path).unlink(missing_ok=True)
-			print(f"Deleted file: {letter_path}")
+			#Path(letter_path).unlink(missing_ok=True)
+			#print(f"Deleted file: {letter_path}")
+			pass
 		except Exception as e:
 			print(f"Could not delete file {letter_path}: {e}")
 	elif flag == "--send_pending_letters":
