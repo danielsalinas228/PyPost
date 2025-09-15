@@ -277,16 +277,24 @@ class PostalDatabase:
                 for row in rows
             ]
         
+    def delete_letter_by_id(self, letter_id: str) -> bool:
+        """Delete a letter from the database by its ID."""
+        with sqlite3.connect(self.db_path) as conn:
+            c = conn.cursor()
+            c.execute("DELETE FROM letters WHERE letter_id = ?", (letter_id,))
+            conn.commit()
+            return c.rowcount > 0
+
 if __name__ == "__main__":
     import sys
     from pprint import pprint
     db_path = "../data/postal.db"
     if len(sys.argv) < 2:
-        print("Usage: python3 postalDatabase.py --getAllLetters|--getAllLettersSummary|--getPendingLettersSummary [db_path]")
+        print("Usage: python3 postalDatabase.py --getAllLetters|--getAllLettersSummary|--getPendingLettersSummary|--delete letter_ID [db_path]")
         sys.exit(1)
     method = sys.argv[1]
     if len(sys.argv) > 2:
-        db_path = sys.argv[2]
+        db_path = sys.argv[2] if not method == "--delete" else (sys.argv[3] if len(sys.argv) > 3 else db_path)
     pdb = PostalDatabase(db_path)
     if method == "--getAllLetters":
         pprint(pdb.getAllLetters())
@@ -294,5 +302,16 @@ if __name__ == "__main__":
         pprint(pdb.get_all_letters_summary())
     elif method == "--getPendingLettersSummary":
         pprint(pdb.get_pending_letters_summary())
+    elif method == "--delete":
+        if len(sys.argv) < 3:
+            print("Usage: python3 postalDatabase.py --delete letter_ID [db_path]")
+            sys.exit(1)
+        letter_id = sys.argv[2]
+        success = pdb.delete_letter_by_id(letter_id)
+        if success:
+            print(f"Letter {letter_id} deleted successfully.")
+        else:
+            print(f"Letter {letter_id} not found or could not be deleted.")
     else:
-        print("Unknown method. Use --getAllLetters, --getAllLettersSummary, or --getPendingLettersSummary.")
+        print("Unknown method. Use --getAllLetters, --getAllLettersSummary, "
+            "--getPendingLettersSummary, or --delete letter_ID [db_path].")
