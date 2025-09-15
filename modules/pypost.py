@@ -107,7 +107,6 @@ class PyPost:
         last_letter = self.db.get_last_submitted_letter()
         prev_scheduled_datetime = last_letter["scheduled_delivery_datetime"] if last_letter else None
         scheduled_delivery = self.calculate_delivery_datetime(prev_scheduled_datetime)
-        scheduled_delivery = now_iso  # Temporary override for testing
 
         letter_name = Path(letter_file_path).stem
         html_contents = self.render_letter_template(letter_content, sender, recipient, letter_name)

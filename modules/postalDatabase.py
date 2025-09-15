@@ -304,7 +304,7 @@ if __name__ == "__main__":
         pprint(pdb.get_pending_letters_summary())
     elif method == "--delete":
         if len(sys.argv) < 3:
-            print("Usage: python3 postalDatabase.py --delete letter_ID [db_path]")
+            print("Usage: python3 postalDatabase.py --delete letter_ID")
             sys.exit(1)
         letter_id = sys.argv[2]
         success = pdb.delete_letter_by_id(letter_id)
