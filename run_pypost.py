@@ -26,9 +26,8 @@ def main():
 			print("Failed to submit letter.")
 		# Delete the submitted letter file
 		try:
-			#Path(letter_path).unlink(missing_ok=True)
-			#print(f"Deleted file: {letter_path}")
-			pass
+			Path(letter_path).unlink(missing_ok=True)
+			print(f"Deleted file: {letter_path}")
 		except Exception as e:
 			print(f"Could not delete file {letter_path}: {e}")
 	elif flag == "--send_pending_letters":
