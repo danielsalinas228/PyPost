@@ -285,16 +285,35 @@ class PostalDatabase:
             conn.commit()
             return c.rowcount > 0
 
+    def override_scheduled_delivery(self, letter_id: str, new_datetime: str) -> bool:
+        """
+        Override the scheduled_delivery_datetime for a letter in transit.
+        Only letters with status 'in transit' can be updated.
+        Returns True if the update was successful, False otherwise.
+        """
+        with sqlite3.connect(self.db_path) as conn:
+            c = conn.cursor()
+            c.execute("""
+                UPDATE letters
+                SET scheduled_delivery_datetime = ?
+                WHERE letter_id = ? AND status = 'in transit'
+            """, (new_datetime, letter_id))
+            conn.commit()
+            return c.rowcount > 0
+
 if __name__ == "__main__":
     import sys
     from pprint import pprint
     db_path = "../data/postal.db"
     if len(sys.argv) < 2:
-        print("Usage: python3 postalDatabase.py --getAllLetters|--getAllLettersSummary|--getPendingLettersSummary|--delete letter_ID [db_path]")
+        print("Usage: python3 postalDatabase.py --getAllLetters|--getAllLettersSummary|--getPendingLettersSummary|--delete letter_ID|--overrideDelivery letter_ID new_datetime [db_path]")
         sys.exit(1)
     method = sys.argv[1]
-    if len(sys.argv) > 2:
-        db_path = sys.argv[2] if not method == "--delete" else (sys.argv[3] if len(sys.argv) > 3 else db_path)
+    # Fix argument parsing here:
+    if method in ("--delete", "--overrideDelivery"):
+        db_path = sys.argv[4] if len(sys.argv) > 4 else db_path
+    else:
+        db_path = sys.argv[2] if len(sys.argv) > 2 else db_path
     pdb = PostalDatabase(db_path)
     if method == "--getAllLetters":
         pprint(pdb.getAllLetters())
@@ -304,7 +323,7 @@ if __name__ == "__main__":
         pprint(pdb.get_pending_letters_summary())
     elif method == "--delete":
         if len(sys.argv) < 3:
-            print("Usage: python3 postalDatabase.py --delete letter_ID")
+            print("Usage: python3 postalDatabase.py --delete letter_ID [db_path]")
             sys.exit(1)
         letter_id = sys.argv[2]
         success = pdb.delete_letter_by_id(letter_id)
@@ -312,6 +331,24 @@ if __name__ == "__main__":
             print(f"Letter {letter_id} deleted successfully.")
         else:
             print(f"Letter {letter_id} not found or could not be deleted.")
+    elif method == "--overrideDelivery":
+        if len(sys.argv) < 4:
+            print("Usage: python3 postalDatabase.py --overrideDelivery letter_ID new_datetime [db_path]")
+            print("Datetime format: %Y-%m-%d %H:%M:%S")
+            sys.exit(1)
+        letter_id = sys.argv[2]
+        new_datetime = sys.argv[3]
+        try:
+            # Validate datetime format
+            datetime.strptime(new_datetime, "%Y-%m-%d %H:%M:%S")
+        except ValueError:
+            print("Invalid datetime format. Use: %Y-%m-%d %H:%M:%S")
+            sys.exit(1)
+        success = pdb.override_scheduled_delivery(letter_id, new_datetime)
+        if success:
+            print(f"Letter {letter_id} scheduled_delivery_datetime updated to {new_datetime}.")
+        else:
+            print(f"Letter {letter_id} not found, not in transit, or could not be updated.")
     else:
         print("Unknown method. Use --getAllLetters, --getAllLettersSummary, "
-            "--getPendingLettersSummary, or --delete letter_ID [db_path].")
+            "--getPendingLettersSummary, --delete letter_ID, or --overrideDelivery letter_ID new_datetime [db_path].")
